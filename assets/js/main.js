@@ -1,24 +1,46 @@
 /* eslint-disable no-console */
-var form = document.querySelector('form');
-var formItem = document.querySelector('#item');
-var formAmount = document.querySelector('#amount');
+var form = document.querySelector('#app form');
+var formItem = document.querySelector('#app #item');
+var formAmount = document.querySelector('#app #amount');
 var countEl = document.querySelector('#items-number');
 var itemsEl = document.querySelector('#all-items');
 var totalAmountEl = document.querySelector('#total');
+
+var containerEl = document.querySelector('.container');
+
+var confirmationEl = document.querySelector('#confirmation');
+var deleteButton = document.querySelector('#confirm-delete');
+var cancelDeleteButton = document.querySelector('#cancel-delete');
+var itemConfirmationEl = document.querySelector('#item-confirmation');
+
+var editEl = document.querySelector('#edit');
+var editForm = document.querySelector('#edit form');
+var editFormItem = document.querySelector('#edit form #item');
+var editFormAmount = document.querySelector('#edit form #amount');
+var editButton = document.querySelector('#confirm-edit');
+var cancelEditButton = document.querySelector('#cancel-edit');
 
 const KEY = 'budget';
 var item, amount, currentSubmission;
 var count = 0;
 var ALL_ITEMS = [];
 
-document.addEventListener('DOMContentLoaded', function(){
-  if(getStoredItems(KEY)) {
+document.addEventListener('DOMContentLoaded', function () {
+  if (getStoredItems(KEY)) {
     ALL_ITEMS = JSON.parse(getStoredItems(KEY));
     count = ALL_ITEMS.length;
     updateCount();
     updateList(ALL_ITEMS);
     updateTotal(ALL_ITEMS);
   }
+
+  cancelDeleteButton.addEventListener('click', hideDeleteConfirmation);
+
+  deleteButton.addEventListener('click', deleteItem);
+
+  // editButton.addEventListener('click', editItems);
+
+  cancelEditButton.addEventListener('click', hideEditBox);
 });
 
 form.addEventListener('submit', (e) => {
@@ -36,6 +58,8 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
 });
 
+editForm.addEventListener('submit', editItems);
+
 // BUDGET CLASS
 class Item {
   constructor(item, amount) {
@@ -45,24 +69,90 @@ class Item {
 }
 
 // FUNCTIONS
-function magic(index) {
-  var itemToDisplay = ALL_ITEMS[index].item + ' - ' + ALL_ITEMS[index].amount;
-  document.querySelector('#item-confirmation').innerHTML = itemToDisplay;
+function editItems(e) {
+  var index = editButton.dataset.index;
 
-  document.querySelector('#confirmation').classList.add('shown');
-  document.querySelector('.container').classList.add('confirm');
+  ALL_ITEMS[index].item = editFormItem.value;
+  ALL_ITEMS[index].amount = Number(editFormAmount.value);
+  
+  updateList(ALL_ITEMS);
+  updateTotal(ALL_ITEMS);
+  store(ALL_ITEMS);
+
+  editFormItem.value = '';
+  editFormAmount.value = '';
+  editButton.dataset.index = null;
+
+  hideEditBox();
+
+  e.preventDefault();
 }
 
-function demo() {
-  var trashEl = document.querySelectorAll('.ti-trash');
+function deleteItem(e) {
+  var index = e.target.dataset.index;
 
-  for(var i = 0; i < trashEl.length; i++) {
-    trashEl[i].addEventListener('click', magic(i));
+  ALL_ITEMS.splice(index, 1);
+  count = ALL_ITEMS.length;
+  updateCount();
+  updateList(ALL_ITEMS);
+  updateTotal(ALL_ITEMS);
+
+  itemConfirmationEl.innerHTML = 'Item';
+  deleteButton.dataset.index = null;
+  cancelDeleteButton.dataset.index = null;
+
+  store(ALL_ITEMS);
+
+  hideDeleteConfirmation();
+}
+
+function hideEditBox() {
+  editEl.classList.remove('shown');
+  containerEl.classList.remove('confirm');
+}
+
+function hideDeleteConfirmation() {
+  confirmationEl.classList.remove('shown');
+  containerEl.classList.remove('confirm');
+}
+
+function showDeleteConfirmation(e) {
+  var index = e.target.dataset.index;
+  var itemToDisplay = ALL_ITEMS[index].item + ' - ' + ALL_ITEMS[index].amount;
+  itemConfirmationEl.innerHTML = itemToDisplay;
+
+  confirmationEl.classList.add('shown');
+  containerEl.classList.add('confirm');
+
+  deleteButton.dataset.index = index;
+  cancelDeleteButton.dataset.index = index;
+}
+
+function showEditBox(e) {
+  var index = e.target.dataset.index;
+
+  editEl.classList.add('shown');
+  containerEl.classList.add('confirm');
+
+  editButton.dataset.index = index;
+  cancelEditButton.dataset.index = index;
+
+  editFormItem.value = ALL_ITEMS[index].item;
+  editFormAmount.value = ALL_ITEMS[index].amount;
+}
+
+function addDeleteListener() {
+  var trashEl = document.querySelectorAll('.ti-trash');
+  var editEl = document.querySelectorAll('.ti-pencil');
+
+  for (var i = 0; i < trashEl.length; i++) {
+    trashEl[i].addEventListener('click', showDeleteConfirmation);
+    editEl[i].addEventListener('click', showEditBox);
   }
 }
 
 function getStoredItems(key) {
-  if(!localStorage.getItem(key)) {
+  if (!localStorage.getItem(key)) {
     return false;
   }
   else {
@@ -76,9 +166,13 @@ function store(arr) {
 
 function updateTotal(arr) {
   var total = 0;
-
-  for(var i=0; i<arr.length; i++) {
-    total += arr[i].amount;
+  if (arr.length === 0) {
+    total = 'Budget';
+  }
+  else {
+    for (var i = 0; i < arr.length; i++) {
+      total += arr[i].amount;
+    }
   }
 
   totalAmountEl.innerHTML = total.toLocaleString();
@@ -90,18 +184,20 @@ function updateList(arr) {
   var child;
 
 
-  for(var i=arr.length - 1; i>=0; i--) {
+  for (var i = arr.length - 1; i >= 0; i--) {
     child = getChildTemplate(arr[i].item, arr[i].amount, i);
     fragment.appendChild(child);
   }
 
   itemsEl.appendChild(fragment);
+
+  addDeleteListener();
 }
 
 function getChildTemplate(item, amount, index) {
   var div = document.createElement('div');
   div.classList.add('item');
-  var editHTML = '<span class="ti-trash" data-index="'+index+'"></span><span class="ti-pencil" data-index="'+index+'"></span>';
+  var editHTML = '<span class="ti-trash" data-index="' + index + '"></span><span class="ti-pencil" data-index="' + index + '"></span>';
 
   var firstP = createPara('item-title', item);
   var secondP = createPara('item-amount', amount);
@@ -125,6 +221,9 @@ function createPara(cls, val) {
 function clearForm() {
   formItem.value = '';
   formAmount.value = '';
+
+  formItem.focus();
+  formAmount.blur();
 }
 
 function updateCount() {
