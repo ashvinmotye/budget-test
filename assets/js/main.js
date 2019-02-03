@@ -226,5 +226,5 @@ function clearForm() {
 }
 
 function updateCount() {
-  countEl.innerHTML = count++;
+  countEl.innerHTML = count + 1;
 }
