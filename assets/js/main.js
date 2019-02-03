@@ -34,31 +34,30 @@ document.addEventListener('DOMContentLoaded', function () {
     updateTotal(ALL_ITEMS);
   }
 
+  form.addEventListener('submit', (e) => {
+    item = formItem.value;
+    amount = Number(formAmount.value);
+
+    currentSubmission = new Item(item, amount);
+    ALL_ITEMS.push(currentSubmission);
+
+    clearForm();
+    updateCount();
+    updateList(ALL_ITEMS);
+    updateTotal(ALL_ITEMS);
+    store(ALL_ITEMS);
+    e.preventDefault();
+  });
+
+  editForm.addEventListener('submit', editItems);
+
   cancelDeleteButton.addEventListener('click', hideDeleteConfirmation);
 
   deleteButton.addEventListener('click', deleteItem);
 
-  // editButton.addEventListener('click', editItems);
-
   cancelEditButton.addEventListener('click', hideEditBox);
 });
 
-form.addEventListener('submit', (e) => {
-  item = formItem.value;
-  amount = Number(formAmount.value);
-
-  currentSubmission = new Item(item, amount);
-  ALL_ITEMS.push(currentSubmission);
-
-  clearForm();
-  updateCount();
-  updateList(ALL_ITEMS);
-  updateTotal(ALL_ITEMS);
-  store(ALL_ITEMS);
-  e.preventDefault();
-});
-
-editForm.addEventListener('submit', editItems);
 
 // BUDGET CLASS
 class Item {
@@ -74,7 +73,7 @@ function editItems(e) {
 
   ALL_ITEMS[index].item = editFormItem.value;
   ALL_ITEMS[index].amount = Number(editFormAmount.value);
-  
+
   updateList(ALL_ITEMS);
   updateTotal(ALL_ITEMS);
   store(ALL_ITEMS);
