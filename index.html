@@ -37,13 +37,13 @@
 
     <form>
       <div class="input-group">
-        <input type="text" name="item" id="new-item" required>
-        <label for="item">Item</label>
+        <label for="new-item">Item</label>
+        <input type="text" name="new-item" id="new-item" required aria-label="Item">
       </div>
 
       <div class="input-group">
-        <input type="number" name="amount" id="new-amount" min="0.01" step="0.01" required>
-        <label for="item">Amount</label>
+        <label for="new-amount">Amount</label>
+        <input type="number" name="new-amount" id="new-amount" min="0.01" step="0.01" required aria-label="Amount">
       </div>
 
       <div class="input-group">
@@ -62,13 +62,13 @@
     <div id="app">
       <form>
         <div class="input-group">
-          <input type="text" name="item" id="item" required>
           <label for="item">Item</label>
+          <input type="text" name="item" id="item" required aria-label="Item">
         </div>
 
         <div class="input-group">
-          <input type="number" name="amount" id="amount" min="0.01" step="0.01" required>
-          <label for="item">Amount</label>
+          <label for="amount">Amount</label>
+          <input type="number" name="amount" id="amount" min="0.01" step="0.01" required aria-label="Amount">
         </div>
 
         <div class="input-group">

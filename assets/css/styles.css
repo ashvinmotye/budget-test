@@ -60,7 +60,7 @@ label {
   right: 18px;
   background: white;
   padding: 0 5px;
-  color: #ababab;
+  color: #4e5646;
   text-transform: lowercase;
   font-size: 14px;
 }
@@ -75,7 +75,7 @@ form input {
 
 form input:focus {
   outline: none;
-  border-color: #8bc34a;
+  border-color: #557b29;
 }
 
 #edit form input:focus {
@@ -84,7 +84,7 @@ form input:focus {
 
 .input-group button {
   padding: 10px 24px 8px;
-  background-color: #8BC34A;
+  background-color: #557b29;
   border: 2px solid #ffffff;
   border-radius: 6px;
   color: #ffffff;
