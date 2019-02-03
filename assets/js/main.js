@@ -15,8 +15,8 @@ var itemConfirmationEl = document.querySelector('#item-confirmation');
 
 var editEl = document.querySelector('#edit');
 var editForm = document.querySelector('#edit form');
-var editFormItem = document.querySelector('#edit form #item');
-var editFormAmount = document.querySelector('#edit form #amount');
+var editFormItem = document.querySelector('#edit form #edit-item');
+var editFormAmount = document.querySelector('#edit form #edit-amount');
 var editButton = document.querySelector('#confirm-edit');
 var cancelEditButton = document.querySelector('#cancel-edit');
 
